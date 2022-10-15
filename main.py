@@ -59,13 +59,14 @@ class DB_worker:
 
 
 if __name__ == "__main__":
-    with open("config.yaml") as f:
+    config_path = os.path.dirname(__file__)
+    with open(config_path + "/config.yaml") as f:
         CONFIG = yaml.safe_load(f)
-    with open(CONFIG["bot"]["template"]) as f:
+    with open(config_path + CONFIG["bot"]["template"]) as f:
         template = f.read()
 
     bot = TeleBot(CONFIG["bot"]["token"])
-    worker = DB_worker(CONFIG["bot"]["db"])
+    worker = DB_worker(config_path + CONFIG["bot"]["db"])
     
     for parser in CONFIG['parsers']:
         page = requests.get(parser["base_url"] + parser["news_path"])
