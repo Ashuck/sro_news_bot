@@ -1,5 +1,6 @@
 from telebot import TeleBot 
 from bs4 import BeautifulSoup
+from bs4 import Comment
 from time import sleep
 import os
 import sqlite3
@@ -73,10 +74,17 @@ if __name__ == "__main__":
         soup = BeautifulSoup(page.text, "html.parser")
         news_list = soup.findAll("div", class_="news-list__item")
 
-        for news in news_list:
+        for news in news_list[:3]:
             item_url, title = process_title(
                 news.find("a", class_="news-list__name"),
                 parser["base_url"]
+            )
+
+            com = news.find(string=lambda text: isinstance(text, Comment))
+            anons = BeautifulSoup(com, "html.parser")
+            anons = "\n".join(
+                [i.text.replace("\n", " ").strip() 
+                for i in anons.a.div.children]
             )
 
             if worker.check_news(news['id']):
@@ -88,12 +96,12 @@ if __name__ == "__main__":
             img = news.find("img")
             img_url = parser["base_url"] + img['src']
             sleep(0.5)
-            text = process_news(item_url)
-            
-            if len(text) < parser["chars_limit"]:
-                content = title + "\n\n" + text
-            else:
-                content = title
+            # text = process_news(item_url)
+            content = title + "\n\n" + anons
+            # if len(text) < parser["chars_limit"]:
+            #     content = title + "\n\n" + text
+            # else:
+            #     content = title
             
             post_text = template.format(
                 content=content,
