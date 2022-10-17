@@ -14,7 +14,7 @@ def process_title(item, base_url):
     return item_url, title
 
 
-def process_news(url):
+def process_news(url): # не используется
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
     body_news = soup.find("div", class_="news-detail")
@@ -26,6 +26,25 @@ def process_news(url):
             for li in child.children:
                 if li.name == 'li':
                     elements.append('* ' + li.get_text(strip=True))    
+    return "\n\n".join(elements)
+
+
+def process_preview(body):
+    elements = []
+    for child in body.a.div.children:
+        if child.get_text(strip=True):
+            if child.name == "p":
+                elements.append(child.get_text(strip=True).replace("\n", " "))
+            elif child.name == "ul":
+                for li in child.children:
+                    if li.name == 'li' and li.get_text(strip=True):
+                        elements.append('🔹 ' + li.get_text(strip=True))
+            elif child.name == "ol":
+                index = 1
+                for li in child.children:
+                    if li.name == 'li' and li.get_text(strip=True):
+                        elements.append(f'{index}. ' + li.get_text(strip=True))
+                        index += 1
     return "\n\n".join(elements)
     
 
@@ -74,7 +93,7 @@ if __name__ == "__main__":
         soup = BeautifulSoup(page.text, "html.parser")
         news_list = soup.findAll("div", class_="news-list__item")
 
-        for news in news_list[:3]:
+        for news in news_list[:1]:
             item_url, title = process_title(
                 news.find("a", class_="news-list__name"),
                 parser["base_url"]
@@ -82,10 +101,7 @@ if __name__ == "__main__":
 
             com = news.find(string=lambda text: isinstance(text, Comment))
             anons = BeautifulSoup(com, "html.parser")
-            anons = "\n".join(
-                [i.text.replace("\n", " ").strip() 
-                for i in anons.a.div.children]
-            )
+            anons = process_preview(anons)
 
             if worker.check_news(news['id']):
                 continue
@@ -96,19 +112,16 @@ if __name__ == "__main__":
             img = news.find("img")
             img_url = parser["base_url"] + img['src']
             sleep(0.5)
-            # text = process_news(item_url)
+
             content = title + "\n\n" + anons
-            # if len(text) < parser["chars_limit"]:
-            #     content = title + "\n\n" + text
-            # else:
-            #     content = title
-            
+
             post_text = template.format(
                 content=content,
                 url=item_url,
                 other_tags=parser["tags"]
-            )
+            )#.replace(".", "\\.").replace("-", "\\-")
 
+            print(post_text)
             bot.send_photo(
                 chat_id=CONFIG["bot"]["chanel"],
                 photo=img_url,

@@ -1,4 +1,5 @@
-#sro {other_tags}
 {content}
 
 Читать на сайте: {url}
+
+#sro {other_tags}
