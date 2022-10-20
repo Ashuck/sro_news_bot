@@ -34,13 +34,16 @@ def process_preview(body):
     for child in body.a.div.children:
         if child.get_text(strip=True):
             if child.name == "p":
-                elements.append(child.get_text(strip=True).replace("\n", " "))
+                
+                elements.append(
+                    child.get_text(strip=False).strip()
+                )
             elif child.name == "ul":
                 for li in child.children:
                     if li.name == 'li' and li.get_text(strip=True):
                         elements.append('🔹 ' + li.get_text(strip=True))
             elif child.name == "ol":
-                index = 1
+                index = 1 # в списке могут быть пустые абзацы 
                 for li in child.children:
                     if li.name == 'li' and li.get_text(strip=True):
                         elements.append(f'{index}. ' + li.get_text(strip=True))
@@ -91,6 +94,7 @@ if __name__ == "__main__":
     for parser in CONFIG['parsers']:
         page = requests.get(parser["base_url"] + parser["news_path"])
         soup = BeautifulSoup(page.text, "html.parser")
+        
         news_list = soup.findAll("div", class_="news-list__item")
 
         for news in news_list[:1]:
@@ -119,7 +123,7 @@ if __name__ == "__main__":
                 content=content,
                 url=item_url,
                 other_tags=parser["tags"]
-            )#.replace(".", "\\.").replace("-", "\\-")
+            )
 
             print(post_text)
             bot.send_photo(
