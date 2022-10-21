@@ -125,8 +125,6 @@ if __name__ == "__main__":
                 other_tags=parser["tags"]
             )
 
-            print(post_text)
-            print(len(post_text))
             if len(post_text) < 1024:
                 bot.send_photo(
                     chat_id=CONFIG["bot"]["chanel"],
