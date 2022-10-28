@@ -135,6 +135,7 @@ if __name__ == "__main__":
                 worker.add_news(news['id'], title)
             else:
                 bot.send_message(
-                    chat_id=458850721,
-                    text=f"Длина сообщения {len(post_text)} {item_url}"
+                    chat_id=CONFIG["bot"]["chanel"],
+                    text=post_text,
+                    parse_mode="Markdown",
                 )
