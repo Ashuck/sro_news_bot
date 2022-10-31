@@ -124,19 +124,19 @@ if __name__ == "__main__":
                 url=item_url,
                 other_tags=parser["tags"]
             )
-
+            
             if len(post_text) < 1024:
                 bot.send_photo(
                     chat_id=CONFIG["bot"]["chanel"],
                     photo=img_url,
                     caption=post_text,
                     parse_mode="Markdown",
+                    
                 )
-                worker.add_news(news['id'], title)
             else:
                 bot.send_message(
                     chat_id=CONFIG["bot"]["chanel"],
-                    text=post_text,
-                    parse_mode="Markdown",
+                    text=post_text + f"\n\n[📷]({img_url})",
+                    parse_mode="Markdown", 
                 )
-                worker.add_news(news['id'], title)
+            worker.add_news(news['id'], title)
