@@ -136,7 +136,7 @@ if __name__ == "__main__":
             else:
                 bot.send_message(
                     chat_id=CONFIG["bot"]["chanel"],
-                    text=post_text + f"\n\n[📷]({img_url})",
+                    text=post_text + f"\n[\u2060]({img_url})",
                     parse_mode="Markdown", 
                 )
             worker.add_news(news['id'], title)
