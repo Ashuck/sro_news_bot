@@ -139,3 +139,4 @@ if __name__ == "__main__":
                     text=post_text,
                     parse_mode="Markdown",
                 )
+                worker.add_news(news['id'], title)
