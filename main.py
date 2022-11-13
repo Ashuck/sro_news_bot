@@ -29,15 +29,26 @@ def process_news(url): # не используется
     return "\n\n".join(elements)
 
 
+def get_text_with_url(element, a_tags):
+    for a in a_tags:
+        a_text =  a.get_text(strip=False)
+        element = element.replace(
+            a_text, f" [{a_text}]({a['href']}) "
+        )
+    return element.replace("\n", " ")
+
 def process_preview(body):
     elements = []
     for child in body.a.div.children:
         if child.get_text(strip=True):
+            
             if child.name == "p":
-                
+                links = child.find_all("a")
                 elements.append(
-                    child.get_text(strip=False).strip()
-                )
+                    get_text_with_url(
+                        child.get_text(strip=False).strip(),
+                        links
+                ))
             elif child.name == "ul":
                 for li in child.children:
                     if li.name == 'li' and li.get_text(strip=True):
