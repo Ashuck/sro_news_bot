@@ -52,12 +52,17 @@ def process_preview(body):
             elif child.name == "ul":
                 for li in child.children:
                     if li.name == 'li' and li.get_text(strip=True):
-                        elements.append('🔹 ' + li.get_text(strip=True))
+                        links = li.find_all("a")
+                        text = get_text_with_url(li.get_text(strip=False).strip(), links)
+                        elements.append('🔹 ' + text)
             elif child.name == "ol":
+                
                 index = 1 # в списке могут быть пустые абзацы 
                 for li in child.children:
                     if li.name == 'li' and li.get_text(strip=True):
-                        elements.append(f'{index}. ' + li.get_text(strip=True))
+                        links = li.find_all("a")
+                        text = get_text_with_url(li.get_text(strip=False).strip(), links)
+                        elements.append(f'{index}. ' + text)
                         index += 1
     return "\n\n".join(elements)
     
