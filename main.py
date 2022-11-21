@@ -1,4 +1,5 @@
 from telebot import TeleBot 
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bs4 import BeautifulSoup
 from bs4 import Comment
 from time import sleep
@@ -137,16 +138,26 @@ if __name__ == "__main__":
 
             post_text = template.format(
                 content=content,
-                url=item_url,
+                # url=item_url,
                 other_tags=parser["tags"]
+            )
+
+            kbr = InlineKeyboardMarkup()
+            kbr.add(
+                InlineKeyboardButton(
+                    text="🌐 Читать на сайте",
+                    url=item_url
+                )
             )
             
             if len(post_text) < 1024:
+                
                 bot.send_photo(
                     chat_id=CONFIG["bot"]["chanel"],
                     photo=img_url,
                     caption=post_text,
                     parse_mode="Markdown",
+                    reply_markup=kbr
                     
                 )
             else:
@@ -157,5 +168,6 @@ if __name__ == "__main__":
                     chat_id=CONFIG["bot"]["chanel"],
                     text=post_text,
                     parse_mode="Markdown", 
+                    reply_markup=kbr
                 )
             worker.add_news(news['id'], title)
