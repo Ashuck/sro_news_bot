@@ -33,7 +33,7 @@ def process_news(url): # не используется
 def get_text_with_url(element, a_tags):
     for a in a_tags:
         a_text =  a.get_text(strip=False)
-        if not a['href'].startwith("http"):
+        if not a['href'].startswith("http"):
             a['href'] = parser["base_url"] + a['href']
         element = element.replace(
             a_text, f" [{a_text}]({a['href']}) "
