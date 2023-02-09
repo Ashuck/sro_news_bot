@@ -47,9 +47,11 @@ def process_preview(body):
             
             if child.name == "p":
                 links = child.find_all("a")
+                text = child.get_text(strip=False).strip()
+                text = text.replace('*', '\\*')
                 elements.append(
                     get_text_with_url(
-                        child.get_text(strip=False).strip(),
+                        text,
                         links
                 ))
             elif child.name == "ul":
@@ -57,6 +59,7 @@ def process_preview(body):
                     if li.name == 'li' and li.get_text(strip=True):
                         links = li.find_all("a")
                         text = get_text_with_url(li.get_text(strip=False).strip(), links)
+                        text = text.replace('*', '\\*')
                         elements.append('🔹 ' + text)
             elif child.name == "ol":
                 
@@ -65,6 +68,7 @@ def process_preview(body):
                     if li.name == 'li' and li.get_text(strip=True):
                         links = li.find_all("a")
                         text = get_text_with_url(li.get_text(strip=False).strip(), links)
+                        text = text.replace('*', '\\*')
                         elements.append(f'{index}. ' + text)
                         index += 1
     return "\n\n".join(elements)
@@ -116,7 +120,7 @@ if __name__ == "__main__":
         
         news_list = soup.findAll("div", class_="news-list__item")
 
-        for news in news_list:
+        for news in news_list[:1]:
             item_url, title = process_title(
                 news.find("a", class_="news-list__name"),
                 parser["base_url"]
@@ -152,23 +156,24 @@ if __name__ == "__main__":
                 )
             )
             
-            if len(post_text) < 1024:
+            # if len(post_text) < 1024:
                 
-                bot.send_photo(
-                    chat_id=CONFIG["bot"]["chanel"],
-                    photo=img_url,
-                    caption=post_text,
-                    parse_mode="Markdown",
-                    reply_markup=kbr
-                )
-            else:
-                splited_text = post_text.split("\n")
-                splited_text [-2] = f"[\u2060]({img_url})"
-                post_text = "\n".join(splited_text)
-                bot.send_message(
-                    chat_id=CONFIG["bot"]["chanel"],
-                    text=post_text,
-                    parse_mode="Markdown", 
-                    reply_markup=kbr
-                )
+            #     bot.send_photo(
+            #         chat_id=CONFIG["bot"]["chanel"],
+            #         photo=img_url,
+            #         caption=post_text,
+            #         parse_mode="Markdown",
+            #         reply_markup=kbr
+            #     )
+            # else:
+            #     splited_text = post_text.split("\n")
+            #     splited_text [-2] = f"[\u2060]({img_url})"
+            #     post_text = "\n".join(splited_text)
+            #     bot.send_message(
+            #         chat_id=CONFIG["bot"]["chanel"],
+            #         text=post_text,
+            #         parse_mode="Markdown", 
+            #         reply_markup=kbr
+            #     )
+            print(post_text)
             worker.add_news(news['id'], title)
