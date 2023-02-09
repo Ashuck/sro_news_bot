@@ -156,24 +156,24 @@ if __name__ == "__main__":
                 )
             )
             
-            # if len(post_text) < 1024:
+            if len(post_text) < 1024:
                 
-            #     bot.send_photo(
-            #         chat_id=CONFIG["bot"]["chanel"],
-            #         photo=img_url,
-            #         caption=post_text,
-            #         parse_mode="Markdown",
-            #         reply_markup=kbr
-            #     )
-            # else:
-            #     splited_text = post_text.split("\n")
-            #     splited_text [-2] = f"[\u2060]({img_url})"
-            #     post_text = "\n".join(splited_text)
-            #     bot.send_message(
-            #         chat_id=CONFIG["bot"]["chanel"],
-            #         text=post_text,
-            #         parse_mode="Markdown", 
-            #         reply_markup=kbr
-            #     )
+                bot.send_photo(
+                    chat_id=CONFIG["bot"]["chanel"],
+                    photo=img_url,
+                    caption=post_text,
+                    parse_mode="Markdown",
+                    reply_markup=kbr
+                )
+            else:
+                splited_text = post_text.split("\n")
+                splited_text [-2] = f"[\u2060]({img_url})"
+                post_text = "\n".join(splited_text)
+                bot.send_message(
+                    chat_id=CONFIG["bot"]["chanel"],
+                    text=post_text,
+                    parse_mode="Markdown", 
+                    reply_markup=kbr
+                )
             print(post_text)
             worker.add_news(news['id'], title)
