@@ -33,6 +33,8 @@ def process_news(url): # не используется
 def get_text_with_url(element, a_tags):
     for a in a_tags:
         a_text =  a.get_text(strip=False)
+        if not a_text:
+            continue
         if not a['href'].startswith("http"):
             a['href'] = parser["base_url"] + a['href']
         element = element.replace(
@@ -49,17 +51,14 @@ def process_preview(body):
                 links = child.find_all("a")
                 text = child.get_text(strip=False).strip()
                 text = text.replace('*', '\\*')
-                elements.append(
-                    get_text_with_url(
-                        text,
-                        links
-                ))
+                text = get_text_with_url(text, links)
+                elements.append(text)
             elif child.name == "ul":
                 for li in child.children:
                     if li.name == 'li' and li.get_text(strip=True):
-                        links = li.find_all("a")
-                        text = get_text_with_url(li.get_text(strip=False).strip(), links)
+                        text = li.get_text(strip=False).strip()
                         text = text.replace('*', '\\*')
+                        text = get_text_with_url(text, links)
                         elements.append('🔹 ' + text)
             elif child.name == "ol":
                 
@@ -67,8 +66,9 @@ def process_preview(body):
                 for li in child.children:
                     if li.name == 'li' and li.get_text(strip=True):
                         links = li.find_all("a")
-                        text = get_text_with_url(li.get_text(strip=False).strip(), links)
+                        text = li.get_text(strip=False).strip()
                         text = text.replace('*', '\\*')
+                        text = get_text_with_url(text, links)
                         elements.append(f'{index}. ' + text)
                         index += 1
     return "\n\n".join(elements)
@@ -155,7 +155,7 @@ if __name__ == "__main__":
                     url=item_url
                 )
             )
-            
+            # print(post_text)
             if len(post_text) < 1024:
                 
                 bot.send_photo(
@@ -175,5 +175,5 @@ if __name__ == "__main__":
                     parse_mode="Markdown", 
                     reply_markup=kbr
                 )
-            print(post_text)
+            # print(post_text)
             worker.add_news(news['id'], title)
