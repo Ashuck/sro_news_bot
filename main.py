@@ -155,6 +155,12 @@ if __name__ == "__main__":
                     url=item_url
                 )
             )
+            kbr.add(
+                InlineKeyboardButton(
+                    text="Вступить в СРО",
+                    url="https://t.me/ru_sro_bot"
+                )
+            )
             # print(post_text)
             if len(post_text) < 1024:
                 
