@@ -119,18 +119,19 @@ if __name__ == "__main__":
         soup = BeautifulSoup(page.text, "html.parser")
         
         news_list = soup.findAll("div", class_="news-list__item")
-
         for news in news_list[:]:
-            if not news.find('span', {'data': 'tg'}):
-                continue
             
             item_url, title = process_title(
                 news.find("a", class_="news-list__name"),
                 parser["base_url"]
             )
 
+            # текст новости в аннсе, а он закомментирован в html. 
             com = news.find(string=lambda text: isinstance(text, Comment))
             anons = BeautifulSoup(com, "html.parser")
+            if not anons.find('span', {'data': 'tg'}):
+                continue
+
             anons = process_preview(anons)
 
             if worker.check_news(news['id']):
