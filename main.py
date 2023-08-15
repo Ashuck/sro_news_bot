@@ -121,6 +121,9 @@ if __name__ == "__main__":
         news_list = soup.findAll("div", class_="news-list__item")
 
         for news in news_list[:]:
+            if not news.find('span', {'data': 'tg'}):
+                continue
+            
             item_url, title = process_title(
                 news.find("a", class_="news-list__name"),
                 parser["base_url"]
